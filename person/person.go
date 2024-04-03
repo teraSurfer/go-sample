@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+type AgeClassifier interface {
+	AgeClassification() string
+	Greeter() string
+}
+
 // Person with capital P means this struct can be accessed outside the package.
 type Person struct {
 	Name              string
@@ -23,6 +28,14 @@ func New(name string, dateOfBirth string) (Person, error) {
 		Name:              name,
 		DayAndTimeOfBirth: dob,
 	}, nil
+}
+
+func (p Person) Greeter() string {
+	return "Hello " + p.Name
+}
+
+func HandleChildren(classifier AgeClassifier) bool {
+	return classifier.AgeClassification() == "Child"
 }
 
 // receiver, accessible only on person object.
@@ -46,6 +59,20 @@ type president struct {
 	Person
 	// this cannot be accessed from outside the package
 	secrets []string
+}
+
+func PresidentGenerator(name string) (president, error) {
+	if name != "Bad Person" {
+		return president{
+			Person: Person{
+				Name:              name,
+				DayAndTimeOfBirth: time.Now(),
+			},
+			secrets: []string{"secret1", "secret 2"},
+		}, nil
+	}
+
+	return president{}, nil
 }
 
 // this function is accessible from outside. returning errors is a good practice.
